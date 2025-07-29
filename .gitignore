@@ -1,0 +1,10 @@
+.gradle
+local.properties
+.idea/
+.kotlin/
+build
+.DS_Store
+storage.json
+dynamicschemetest/app/budgets
+dynamicschemetest/app/preferences.txt
+finpixconverter/data
