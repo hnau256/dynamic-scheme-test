@@ -16,7 +16,7 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
     val app = DesktopApp(
         scope = this,
-        seed = createPinFinAppSeed(
+        seed = createDynamicSchemeTestAppSeed(
             defaultBrightness = ThemeBrightness.Dark,
         ),
     )
@@ -28,10 +28,10 @@ fun main() = runBlocking {
         val scale = 2f
         Window(
             onCloseRequest = { exitApplication() },
-            title = "PinFin",
+            title = "Dynamic scheme test",
             state = rememberWindowState(
                 width = 800.dp * scale,
-                height = 320.dp * scale,
+                height = 360.dp * scale,
             ),
         ) {
             CompositionLocalProvider(

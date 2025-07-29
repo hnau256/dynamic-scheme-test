@@ -4,7 +4,7 @@ import hnau.common.app.model.app.AppSeed
 import hnau.common.app.model.theme.Hue
 import hnau.common.app.model.theme.ThemeBrightness
 
-fun createPinFinAppSeed(
+fun createDynamicSchemeTestAppSeed(
     defaultBrightness: ThemeBrightness? = null,
 ): AppSeed<RootModel, RootModel.Skeleton> = AppSeed(
     fallbackHue = Hue(0.8f),

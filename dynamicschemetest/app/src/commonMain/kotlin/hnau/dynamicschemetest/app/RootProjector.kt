@@ -3,11 +3,16 @@ package hnau.dynamicschemetest.app
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,10 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import dynamiccolor.ColorSpec
+import dynamiccolor.DynamicScheme
 import hnau.common.app.model.theme.ThemeBrightness
 import hnau.common.app.projector.uikit.utils.Dimens
 import hnau.common.app.projector.utils.collectAsMutableAccessor
 import hnau.common.app.projector.utils.horizontalDisplayPadding
+import hnau.common.app.projector.utils.verticalDisplayPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -31,12 +39,14 @@ class RootProjector(
     @Composable
     fun Content() {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
         ) {
             Column(
                 modifier = Modifier
                     .width(512.dp)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .verticalDisplayPadding(),
                 verticalArrangement = Arrangement.spacedBy(Dimens.separation)
             ) {
                 Fraction(
@@ -69,6 +79,20 @@ class RootProjector(
                             )
                         }
                 }
+                Choose(
+                    title = "Specification version",
+                    value = model.specVersion,
+                    all = ColorSpec.SpecVersion.entries,
+                    extractTitle = { it.name },
+                    modifier = Modifier.horizontalDisplayPadding().fillMaxWidth(),
+                )
+                Choose(
+                    title = "Platform",
+                    value = model.platform,
+                    all = DynamicScheme.Platform.entries,
+                    extractTitle = { it.name },
+                    modifier = Modifier.horizontalDisplayPadding().fillMaxWidth(),
+                )
             }
             Schemes(
                 model = model,
@@ -89,24 +113,73 @@ class RootProjector(
     }
 
     @Composable
-    private fun Fraction(
-        modifier: Modifier = Modifier,
+    private fun <T> Choose(
         title: String,
-        value: MutableStateFlow<Float>,
+        value: MutableStateFlow<T>,
+        all: List<T>,
+        extractTitle: (T) -> String,
+        modifier: Modifier = Modifier,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(Dimens.smallSeparation),
             modifier = modifier,
         ) {
             Title(
                 text = title,
             )
-            var current by value.collectAsMutableAccessor()
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                var selected by value.collectAsMutableAccessor()
+                all.forEachIndexed { i, item ->
+                    SegmentedButton(
+                        selected = item == selected,
+                        onClick = { selected = item },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = i,
+                            count = all.size,
+                        ),
+                        label = {
+                            Text(
+                                text = extractTitle(item),
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun Fraction(
+        title: String,
+        value: SliderValue,
+        modifier: Modifier = Modifier,
+    ) {
+        Column(
+            modifier = modifier,
+        ) {
+            var current by value.value.collectAsMutableAccessor()
+            Title(
+                text = "$title ($current)",
+            )
             Slider(
                 modifier = Modifier.fillMaxWidth(),
                 value = current,
-                onValueChange = { current = it }
+                onValueChange = { current = it },
+                valueRange = value.config.min..value.config.max,
             )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = value.config.min.toString(),
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = value.config.max.toString(),
+                )
+            }
         }
     }
 

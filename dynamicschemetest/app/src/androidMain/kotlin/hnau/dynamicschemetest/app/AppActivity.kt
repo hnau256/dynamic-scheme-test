@@ -19,7 +19,7 @@ class AppActivity : ComponentActivity() {
     private val viewModel: AppViewModel<RootModel, RootModel.Skeleton> by viewModels {
         AppViewModel.Companion.factory(
             context = applicationContext,
-            seed = createPinFinAppSeed(),
+            seed = createDynamicSchemeTestAppSeed(),
         )
     }
 

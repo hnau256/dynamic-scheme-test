@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dynamicschemetest">PinFin</string>
+    <string name="app_title">Dynamic scheme test</string>
 </resources>
